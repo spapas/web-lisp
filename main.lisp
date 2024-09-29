@@ -3,7 +3,7 @@
 (defpackage #:web-lisp
   (:use :cl)
   (:local-nicknames (#:ht #:hunchentoot))
-  (:export #:main #:stop))
+  (:export #:main #:start #:stop))
 
 
 (in-package #:web-lisp)
@@ -18,19 +18,18 @@ ht:*dispatch-table*
 (type-of *base-acceptor*)
 
 (ht:define-easy-handler
-  (login :uri "/login") ()
-  (setf (ht:content-type*) "text/html")
-  "κοκο")
+ (login :uri "/login") ()
+ (setf (ht:content-type*) "text/html")
+ "κοκο")
 
 (push (ht:create-folder-dispatcher-and-handler
-        "/static/"
-        #p"c:/progr/")
+       "/static/"
+       #p"c:/progr/")
       ht:*dispatch-table*)
 
 (ht:define-easy-handler (say-yo :uri "/yo") (name)
-  (setf (ht:content-type*) "text/plain")
-  (format nil "Hey~@[ ~A~]!" name))
-
+                        (setf (ht:content-type*) "text/plain")
+                        (format nil "Hey~@[ ~A~]!" name))
 
 
 (defun starts-with (string prefix)
@@ -39,13 +38,17 @@ ht:*dispatch-table*
     (and (>= (length string) prefix-length)
          (string= (subseq string 0 prefix-length) prefix))))
 
-(defun stop() 
+(defun start ()
+  (ht:start *base-acceptor*))
+
+
+(defun stop ()
   (ht:stop *base-acceptor*))
 
 (defun main ()
   (format t "Starting acceptor")
   (terpri)
-  (ht:start *base-acceptor*)
+  (start)
 
   (flet ((cleanup ()
                   (format t "Stopping acceptor~%")
@@ -54,6 +57,7 @@ ht:*dispatch-table*
     ;; Set up a handler for the SIGINT signal (Ctrl+C)
     (handler-bind ((sb-sys:interactive-interrupt
                     (lambda (condition)
+                      (declare (ignore condition))
                       (cleanup) ; Call cleanup when Ctrl+C is pressed
                       (sb-ext:exit))))
 
@@ -66,6 +70,6 @@ ht:*dispatch-table*
 
 ;; Start at repl
 ;; (ql:quickload :web-lisp)
-;; (web-lisp:main)
+;; (web-lisp:start)
 ;; Stop
 ;; (web-lisp:stop)

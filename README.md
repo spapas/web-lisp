@@ -27,10 +27,14 @@ Clone the project on one of your `ql:*local-project-directories*` folder.
 ;; Load project from ql
 (ql:quickload :web-lisp)
 ;; Start the server
-(web-lisp:main)
+(web-lisp:start)
 ;; Stop server
 (web-lisp:stop)
 ```
+
+**To run**
+
+sbcl --load web-lisp.asd --eval "(ql:quickload :web-lisp)" --eval "(web-lisp:start)"
 
 **To build**
 
