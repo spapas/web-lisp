@@ -21,7 +21,7 @@ You need to use sbcl and install quicklisp. Sample .sbcrlc (i.e C:\Users\serafei
 
 Clone the project on one of your `ql:*local-project-directories*` folder. 
 
-From a repl:
+**To use with the repl**
 
 ```lisp
 ;; Load project from ql
@@ -31,3 +31,8 @@ From a repl:
 ;; Stop server
 (web-lisp:stop)
 ```
+
+**To build**
+
+Run `build.bat`
+
