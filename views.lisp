@@ -80,7 +80,7 @@
   (format nil "x: ~a y: ~a z: ~a" x y z))
 
 (easy-routes:defroute admin ("/admin") (y &get z)
-  (format nil " ~a y: ~a z: ~a" (ht:start-session) y z))
+  (format nil " ~a y: ~a z: ~a" (ht:start-session) (sleep 1) z))
 
 
 (defun shopping-list ()

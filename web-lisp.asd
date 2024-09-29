@@ -14,8 +14,10 @@
   :build-pathname "web-lisp"
   :entry-point "web-lisp:main"
   ; :pathname #P"c:/progr/lisp/common-projects/web-lisp/"
-  :depends-on (:hunchentoot
+  :depends-on (
+               :alexandria
                :easy-routes
+               :hunchentoot
                :spinneret)
   :serial t
   :components ((:file "conf")
