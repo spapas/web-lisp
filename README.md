@@ -15,8 +15,6 @@ You need to use sbcl and install quicklisp. Sample .sbcrlc (i.e C:\Users\serafei
 ;;; Add local-project to *local-project-directories*
 (push #p"c:/progr/lisp/local-projects/" ql:*local-project-directories*)
 (push #p"c:/progr/lisp/projects/" ql:*local-project-directories*)
-
-(push :hunchentoot-no-ssl *features*)
 ```
 
 Clone the project on one of your `ql:*local-project-directories*` folder. 
