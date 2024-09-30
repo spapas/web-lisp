@@ -20,8 +20,10 @@
                :spinneret)
   :serial t
   :components ((:file "conf")
-               (:file "views")
-               (:file "main"))
+               (:file "main")
+               (:module "views"
+                         :components
+                         ((:file "layout"))))
   :in-order-to ((test-op (test-op :web-lisp-tests))))
 
 
