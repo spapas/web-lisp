@@ -6,14 +6,19 @@
 
 (in-package #:web-lisp-conf)
 
+(concatenate 'string "A" "B")
+(merge-pathnames "A/Β" (UIOP/OS:GETCWD))
 
-(defun read-local-conf ()
-  (let ((local-conf (merge-pathnames "conf/local.ini" (UIOP/OS:GETCWD))))
+(defun read-local-conf (&optional (conf-dir "conf/"))
+  (let* ((local-conf-name (concatenate 'string conf-dir "local.ini"))
+         (local-conf (merge-pathnames local-conf-name (UIOP/OS:GETCWD))))
     (when (probe-file local-conf)
           (cl-ini:parse-ini local-conf))))
 
-(defun read-conf ()
-  (cl-ini:parse-ini (merge-pathnames "conf/base.ini" (UIOP/OS:GETCWD))))
+(defun read-conf (&optional (conf-dir "conf/"))
+  (let* ((base-conf-name (concatenate 'string conf-dir "base.ini"))
+        (base-conf (merge-pathnames base-conf-name (UIOP/OS:GETCWD))))
+    (cl-ini:parse-ini base-conf)))
 
 
 (defun alist-keys (alist)
