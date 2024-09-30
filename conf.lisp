@@ -15,7 +15,6 @@
 (defun read-conf ()
   (cl-ini:parse-ini (merge-pathnames "conf/base.ini" (UIOP/OS:GETCWD))))
 
-(defparameter *conf* (merge-config-lists (read-conf) (read-local-conf)))
 
 (defun alist-keys (alist)
   (mapcar 'car alist))
@@ -31,6 +30,9 @@
                 (rplacd (assoc key li1) (merge-config-lists (cdr (assoc key li1)) (cdr (assoc key li2))))))
           (push (assoc key li2) li1)))
     li1))
+
+(defparameter *conf* (merge-config-lists (read-conf) (read-local-conf)))
+
 
 (defun get-conf (key &optional (section :global))
   (cl-ini:ini-value *conf* key :section section))
