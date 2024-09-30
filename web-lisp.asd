@@ -3,7 +3,6 @@
   (:use :cl :asdf))
 (in-package :web-lisp-asd)
 
-
 (defsystem "web-lisp"
   :name "web-lisp"
   :description "web-lisp: a sample clisp web project"
@@ -14,8 +13,7 @@
   :build-pathname "web-lisp"
   :entry-point "web-lisp:main"
   ; :pathname #P"c:/progr/lisp/common-projects/web-lisp/"
-  :depends-on (
-               :alexandria
+  :depends-on (:alexandria
                :easy-routes
                :hunchentoot
                :spinneret)

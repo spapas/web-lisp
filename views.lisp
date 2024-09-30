@@ -26,16 +26,7 @@
                            (:li :class "nav-item"
                                 (:a :class "nav-link active" :aria-current "page" :href "#" "Home"))
                            (:li :class "nav-item"
-                                (:a :class "nav-link" :href "#" "Link"))
-                           (:li :class "nav-item"
-                                (:a :class "nav-link disabled"
-                                    :href "#"
-                                    :tabindex "-1"
-                                    :aria-disabled "true"
-                                    "Disabled")))
-                      (:form :class "d-flex"
-                             (:input :class "form-control me-2" :type "search" :placeholder "Search" :aria-label "Search")
-                             (:button :class "btn btn-outline-success" :type "submit" "Search")))))))
+                                (:a :class "nav-link" :href "#" "Link"))))))))
 
 (defun footer ()
   (sp:with-html (:footer :style "color: red" ("Last login: ~A" *last-login*))))

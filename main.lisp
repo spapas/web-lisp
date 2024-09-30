@@ -1,7 +1,7 @@
 (in-package :cl-user)
 
 (defpackage #:web-lisp
-  (:use :cl)
+  (:use :cl :web-lisp-conf)
   (:local-nicknames (#:ht #:hunchentoot))
   (:export #:main #:start #:stop))
 
@@ -9,8 +9,8 @@
 
 (defvar *base-acceptor* (make-instance
                             'easy-routes:easy-routes-acceptor
-                          :port 8001
-                          :address "127.0.0.1"))
+                          :port (get-conf :bind-port)
+                          :address (get-conf :bind-address)))
 
 (ht:acceptor-address *base-acceptor*)
 ht:*dispatch-table*

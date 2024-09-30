@@ -18,3 +18,4 @@
 *.exe
 .vscode
 *.sqlite
+conf/local.ini
