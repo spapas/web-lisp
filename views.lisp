@@ -53,7 +53,10 @@
        (:title ,title)
        (styles)
        (js))
-      (:body (nav) ,@body (footer)))))
+      (:body (nav)
+             (:div :class "container-fluid"
+                   ,@body)
+             (footer)))))
 
 (defparameter *shopping-list*
               '("Atmospheric pond1s"
@@ -76,8 +79,8 @@
 
 (defun shopping-list ()
   (with-page (:title "Home page")
-    (:header :class "container-fluid"
-             (:h1 "Home page"))
+    (:header
+     (:h1 "Home page"))
     (:section
      ("~A, here is *your* shopping list: " *user-name*)
      (:ol (dolist (item *shopping-list*)
