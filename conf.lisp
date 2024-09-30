@@ -6,26 +6,33 @@
 
 (in-package #:web-lisp-conf)
 
-(concatenate 'string "A" "B")
-(merge-pathnames "A/Β" (UIOP/OS:GETCWD))
+;;; The base configuration is kept in a base.ini file inside /conf. The settings
+;;; there can be overriden by adding a local.ini file in the same directory.
+;;; The local.ini shouldn't be added to the VCS.
+
+(defun read-conf (&optional (conf-dir "conf/"))
+  "Read the base configuration"
+  (let* ((base-conf-name (concatenate 'string conf-dir "base.ini"))
+         (base-conf (merge-pathnames base-conf-name (UIOP/OS:GETCWD))))
+    (cl-ini:parse-ini base-conf)))
 
 (defun read-local-conf (&optional (conf-dir "conf/"))
+  "Read the extra configuration"
   (let* ((local-conf-name (concatenate 'string conf-dir "local.ini"))
          (local-conf (merge-pathnames local-conf-name (UIOP/OS:GETCWD))))
     (when (probe-file local-conf)
           (cl-ini:parse-ini local-conf))))
 
-(defun read-conf (&optional (conf-dir "conf/"))
-  (let* ((base-conf-name (concatenate 'string conf-dir "base.ini"))
-        (base-conf (merge-pathnames base-conf-name (UIOP/OS:GETCWD))))
-    (cl-ini:parse-ini base-conf)))
-
-
 (defun alist-keys (alist)
+  "Helper function. Get the keys of an alist"
   (mapcar 'car alist))
 
-(defun merge-config-lists (li1 li2)
-  (let ((li2-keys (alist-keys li2)))
+(defun merge-config-lists (li1-in li2)
+  "Merge two aconf lists: For all keys of the 2nd conf check if key exists
+  in the 1st. If yes merge the elements if not copy it over. Doesn't modify
+  the 1st list (uses treecopy)"
+  (let ((li1 (copy-tree li1-in))
+        (li2-keys (alist-keys li2)))
     (dolist (key li2-keys)
       (if (assoc key li1)
           (let ((value2 (cdr (assoc key li2))))
@@ -38,6 +45,6 @@
 
 (defparameter *conf* (merge-config-lists (read-conf) (read-local-conf)))
 
-
-(defun get-conf (key &optional (section :global))
-  (cl-ini:ini-value *conf* key :section section))
+(defun get-conf (key &optional (section :global) (conf-holder *conf*))
+  "The base API of conf; get a value"
+  (cl-ini:ini-value conf-holder key :section section))
