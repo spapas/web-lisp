@@ -24,7 +24,7 @@
                (:module "views"
                          :components
                          ((:file "layout"))))
-  :in-order-to ((test-op (test-op :web-lisp-tests))))
+  :in-order-to ((test-op (test-op :web-lisp/tests))))
 
 
 #+sb-core-compression
