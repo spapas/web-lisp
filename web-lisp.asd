@@ -35,7 +35,9 @@
   :author "Serafeim"
   :description "tests web-lisp"
   :depends-on (:web-lisp :fiveam)
+  :serial t
   :components ((:module "t"
+                        :serial t
                         :components
                         ((:file "tests")
                          (:file "runner"))))
