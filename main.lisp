@@ -7,24 +7,50 @@
 
 (in-package #:web-lisp)
 
+(defun debug-request (request)
+  (let* ((uri (ht:request-uri request))
+         (method (ht:request-method request)))
+    (ht:log-message* :INFO
+      (concatenate 'string
+        "REQUEST:~%Method: " (format nil "~A" method) "~%"
+        "URI: " (format nil "~A" uri)))))
+
+(defclass slash-redirect-acceptor (easy-routes:easy-routes-acceptor)
+    ()
+  (:documentation "An acceptor that redirects requests without a trailing slash to the 
+   same URL with a trailing slash, while supporting Easy-Routes."))
+
+(defmethod ht:acceptor-dispatch-request ((acceptor slash-redirect-acceptor) request)
+  (flet ((ends-with (string char)
+                    "Checks if STRING ends with CHAR."
+                    (and (> (length string) 0) (char= (char string (1- (length string))) char))))
+    (let* ((uri (ht:request-uri request))
+           (method (ht:request-method request)))
+      (debug-request request)
+      (if (and (not (equal "/" uri))
+               (not (ends-with uri #\/))
+               (eq :get method))
+          (ht:redirect (concatenate 'string uri "/") :code 301)
+          (call-next-method)))))
+
+
 (defvar *base-acceptor* (make-instance
-                            'easy-routes:easy-routes-acceptor
+                            ;'easy-routes:easy-routes-acceptor
+                          'slash-redirect-acceptor
                           :port (get-conf :bind-port)
                           :address (get-conf :bind-address)))
 
-(ht:acceptor-address *base-acceptor*)
-ht:*dispatch-table*
-(type-of *base-acceptor*)
+;; serve static files
+(push (ht:create-folder-dispatcher-and-handler
+        "/static/"
+        #p"c:/progr/lisp/projects/web-lisp/static/")
+      ht:*dispatch-table*)
 
+;; Define some test routes
 (ht:define-easy-handler
   (login :uri "/login") ()
   (setf (ht:content-type*) "text/html")
   "κοκο")
-
-(push (ht:create-folder-dispatcher-and-handler
-        "/static/"
-        #p"c:/progr/")
-      ht:*dispatch-table*)
 
 (ht:define-easy-handler (say-yo :uri "/yo") (name)
   (setf (ht:content-type*) "text/plain")
