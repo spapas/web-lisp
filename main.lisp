@@ -7,6 +7,8 @@
 
 (in-package #:web-lisp)
 
+(setf ht:*session-secret* (get-conf :session-secret))
+
 (defun debug-request (request)
   (let* ((uri (ht:request-uri request))
          (method (ht:request-method request)))
@@ -33,6 +35,13 @@
           (ht:redirect (concatenate 'string uri "/") :code 301)
           (call-next-method)))))
 
+
+(defmethod ht:session-created ((acceptor slash-redirect-acceptor) (session t))
+  (ht:log-message* :INFO "Session created: ~A // ~A // ~Α"
+    session
+    session ht:*session*
+    (ht:session-id session))
+  (call-next-method))
 
 (defvar *base-acceptor* (make-instance
                             ;'easy-routes:easy-routes-acceptor
