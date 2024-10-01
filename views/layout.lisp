@@ -90,3 +90,28 @@
 
 (easy-routes:defroute home ("/") ()
   (shopping-list))
+
+
+(easy-routes:defroute login-get ("/login/" :method :get) ()
+  (with-page (:title "Σύνδεση")
+
+    (:form :style "max-width: 400px; margin: auto;" :method "post" :action ""
+           (:h1 :class "h3 mb-3 fw-normal" "Συνδεθείτε")
+
+           (:div :class "form-floating"
+                 (:input :name "username" :type "text" :class "form-control" :id "floatingInput" :placeholder "Ον. χρήστη")
+                 (:label :for "floatingInput" "Ον. χρήστη"))
+
+           (:div :class "form-floating"
+                 (:input :name "password" :type "password" :class "form-control" :id "floatingPassword" :placeholder "Κωδικός")
+                 (:label :for "floatingPassword" "Κωδικός"))
+
+           (:button :class "btn btn-primary w-100 py-2" :type "submit" "Σύνδεση"))))
+
+(easy-routes:defroute login-post ("/login/" :method :post) (&post username password)
+  (with-page (:title "Σύνδεση P")
+
+    (:div :style "max-width: 400px; margin: auto;" 
+           (:div username)
+           (:div password)
+           (:div :class "alert alert-success" "Συνδεθήκατε επιτυχώς!"))))
