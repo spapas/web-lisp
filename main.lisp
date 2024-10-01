@@ -9,13 +9,21 @@
 
 (setf ht:*session-secret* (get-conf :session-secret))
 
+(defun debug-session (s)
+  (if (null s) "No session"
+      (format nil "ID: ~A, remote addr: ~A, username: ~A"
+        (ht:session-id s)
+        (ht:session-remote-addr s) 
+        (ht:session-value :username))))
+
 (defun debug-request (request)
   (let* ((uri (ht:request-uri request))
          (method (ht:request-method request)))
     (ht:log-message* :INFO
       (concatenate 'string
         "REQUEST:~%Method: " (format nil "~A" method) "~%"
-        "URI: " (format nil "~A" uri)))))
+        "URI: " (format nil "~A" uri) "~%"
+        "SESSION: " (format nil "~A" (debug-session ht:*session*)) "~%"))))
 
 (defclass slash-redirect-acceptor (easy-routes:easy-routes-acceptor)
     ()
@@ -36,7 +44,7 @@
           (call-next-method)))))
 
 
-(defmethod ht:session-created ((acceptor slash-redirect-acceptor) (session t))
+(defmethod session-created ((acceptor slash-redirect-acceptor) (session t))
   (ht:log-message* :INFO "Session created: ~A // ~A // ~Α"
     session
     session ht:*session*

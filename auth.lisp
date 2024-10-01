@@ -3,7 +3,7 @@
 (defpackage #:web-lisp-auth
   (:use :cl)
   (:local-nicknames (#:ht #:hunchentoot))
-  (:export #:authenticate #:login))
+  (:export #:authenticate #:do-login))
 
 (in-package #:web-lisp-auth)
 
@@ -16,6 +16,9 @@
 
 (defun do-login (username)
   "Do the login by assigning the username to the session"
-  (let ((session (ht:start-session)))
-    (setf (ht:session-value 'username) username)
-    session))
+  (ht:log-message* :INFO username)
+  (unless (null ht:*session*) (progn
+                               (ht:remove-session ht:*session*)
+                               (setf (ht:session ht:*request*) nil)))
+  (ht:start-session)
+  (setf (ht:session-value :username) username))

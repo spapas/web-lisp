@@ -24,14 +24,14 @@
                 (:div :class "navbar-collapse collapse" :id "navbarCollapse"
                       (:ul :class "navbar-nav me-auto mb-2 mb-md-0"
                            (:li :class "nav-item"
-                                (:a :class "nav-link active" :aria-current "page" :href "#" "Home"))
+                                (:a :class "nav-link active" :aria-current "page" :href (easy-routes:genurl 'login) "Login"))
                            (:li :class "nav-item"
                                 (:a :class "nav-link" :href "#" "Link"))))))))
 
 (defun footer ()
   (sp:with-html (:div :class "container-fluid"
                       (:footer :class "d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top"
-                               (:p :class "col-md-4 mb-0 text-body-secondary" "© 2024 Company, Inc")
+                               (:p :class "col-md-4 mb-0 text-body-secondary" (web-lisp::debug-session ht:*session*))
                                (:a :href "/" :class "col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none")
                                (:ul :class "nav col-md-4 justify-content-end"
                                     (:li :class "nav-item" (:a :href "#" :class "nav-link px-2 text-body-secondary" "Home"))
@@ -92,7 +92,7 @@
   (shopping-list))
 
 
-(easy-routes:defroute login-get ("/login/" :method :get) ()
+(easy-routes:defroute login ("/login/" :method :get) ()
   (with-page (:title "Σύνδεση")
 
     (:form :style "max-width: 400px; margin: auto;" :method "post" :action ""
@@ -109,9 +109,8 @@
            (:button :class "btn btn-primary w-100 py-2" :type "submit" "Σύνδεση"))))
 
 (easy-routes:defroute login-post ("/login/" :method :post) (&post username password)
-  (with-page (:title "Σύνδεση P")
-
-    (:div :style "max-width: 400px; margin: auto;" 
-           (:div username)
-           (:div password)
-           (:div :class "alert alert-success" "Συνδεθήκατε επιτυχώς!"))))
+  (if (web-lisp-auth:authenticate username password)
+      (progn 
+        (web-lisp-auth:do-login username)
+        (ht:redirect (easy-routes:genurl 'home)))
+      (ht:redirect (easy-routes:genurl 'login))))
