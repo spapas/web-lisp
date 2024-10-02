@@ -7,16 +7,13 @@
                 "ασδα1"
                 "Intravenous retribution champions"))
 
-(defparameter *user-name* "John Q. Lisper")
-
-(defparameter *last-login* "12th 1")
 
 (defun shopping-list ()
   (with-page (:title "Home page")
     (:header
      (:h1 "Home page"))
     (:section
-     ("~A, here is *your* shopping list: " *user-name*)
+     ("~A, here is *your* shopping list: " "KOKO")
      (:ol (dolist (item *shopping-list*)
             (:li (1+ (random 110)) item))))))
 
