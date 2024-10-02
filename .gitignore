@@ -19,3 +19,4 @@
 .vscode
 *.sqlite
 conf/local.ini
+*.dll
