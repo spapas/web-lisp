@@ -69,24 +69,44 @@
   (terpri)
   (start)
 
-  (flet
-      ((cleanup ()
-                (format t "Stopping acceptor~%")
-                (ht:stop *base-acceptor*)))
+  (flet ((cleanup ()
+         (format t "Stopping acceptor~%")
+         (ht:stop *base-acceptor*)))
 
-    (when (find :sbcl *features*)
-          (handler-bind ((sb-sys:interactive-interrupt
-                          (lambda (condition)
-                            (declare (ignore condition))
-                            (cleanup) ; Call cleanup when Ctrl+C is pressed
-                            (sb-ext:exit))))))
-
-    ; Join the listener-thread to avoid killing it
+  ;; SBCL-specific code
+  #+sbcl
+  (progn
+    (handler-bind ((sb-sys:interactive-interrupt
+                    (lambda (condition)
+                      (declare (ignore condition))
+                      (cleanup) ; Call cleanup when Ctrl+C is pressed
+                      (sb-ext:exit)))))
+    ;; Join the listener thread in SBCL
     (sb-thread:join-thread
       (find-if
           (lambda (th)
-            (alexandria:starts-with-subseq "hunchentoot-listener" (sb-thread:thread-name th)))
-          (sb-thread:list-all-threads)))))
+            (alexandria:starts-with-subseq "hunchentoot-listener"
+                                           (sb-thread:thread-name th)))
+          (sb-thread:list-all-threads))))
+
+  ;; CCL-specific code
+  #-sbcl
+  (progn
+    (ccl:install-signal-handler ccl:+sigint+
+                                (lambda (signum)
+                                  (declare (ignore signum))
+                                  (cleanup)
+                                  (ccl:quit)))  ;; Exit in CCL
+
+    ;; Join the listener thread in CCL
+    (ccl:process-wait
+     "Waiting for listener"
+     (lambda ()
+       (find-if (lambda (proc)
+                  (alexandria:starts-with-subseq
+                   "hunchentoot-listener"
+                   (ccl:process-name proc)))
+                (ccl:all-processes)))))))
 
 
 ;; Start at repl
