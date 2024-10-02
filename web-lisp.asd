@@ -20,6 +20,7 @@
                :spinneret)
   :serial t
   :components ((:file "conf")
+               (:file "misc")
                (:file "auth")
                (:file "main")
                (:module "views"

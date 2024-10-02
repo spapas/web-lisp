@@ -24,7 +24,10 @@
                 (:div :class "navbar-collapse collapse" :id "navbarCollapse"
                       (:ul :class "navbar-nav me-auto mb-2 mb-md-0"
                            (:li :class "nav-item"
-                                (:a :class "nav-link active" :aria-current "page" :href (easy-routes:genurl 'login) "Login"))
+                                (if (web-lisp-auth:logged-in)
+                                    (:form :method "post" :action (easy-routes:genurl 'logout)
+                                           (:button :class "nav-link" :type "submit" "Logout"))
+                                    (:a :class "nav-link" :aria-current "page" :href (easy-routes:genurl 'login) "Login")))
                            (:li :class "nav-item"
                                 (:a :class "nav-link" :href "#" "Link"))))))))
 
@@ -110,7 +113,11 @@
 
 (easy-routes:defroute login-post ("/login/" :method :post) (&post username password)
   (if (web-lisp-auth:authenticate username password)
-      (progn 
-        (web-lisp-auth:do-login username)
-        (ht:redirect (easy-routes:genurl 'home)))
+      (progn
+       (web-lisp-auth:do-login username)
+       (ht:redirect (easy-routes:genurl 'home)))
       (ht:redirect (easy-routes:genurl 'login))))
+
+(easy-routes:defroute logout ("/logout/" :method :post) ()
+  (web-lisp-auth:do-logout)
+  (ht:redirect (easy-routes:genurl 'home)))

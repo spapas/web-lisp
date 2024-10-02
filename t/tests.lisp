@@ -70,5 +70,11 @@
   (is (equal (web-lisp-auth:authenticate "root" "123") t))
   (is (equal (web-lisp-auth:authenticate "user" "user") nil)))
 
+(test misc-tests
+  "Test the misc module"
+  (is (equal "http://localhost:8000/login/?foo=bar&baz=qux#ko" (web-lisp-misc:ensure-path-ends-with-slash "http://localhost:8000/login?foo=bar&baz=qux#ko")))
+  (is (equal "/koko/?z=3" (web-lisp-misc:ensure-path-ends-with-slash "/koko/?z=3")))
+  (is (equal "/koko/?z=3" (web-lisp-misc:ensure-path-ends-with-slash "/koko?z=3"))))
+
 ;(fiveam:run! 'conf-tests)
-(fiveam:run! 'auth-tests)
+(fiveam:run! 'misc-tests)

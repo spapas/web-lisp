@@ -13,7 +13,7 @@
   (if (null s) "No session"
       (format nil "ID: ~A, remote addr: ~A, username: ~A"
         (ht:session-id s)
-        (ht:session-remote-addr s) 
+        (ht:session-remote-addr s)
         (ht:session-value :username))))
 
 (defun debug-request (request)
@@ -23,6 +23,7 @@
       (concatenate 'string
         "REQUEST:~%Method: " (format nil "~A" method) "~%"
         "URI: " (format nil "~A" uri) "~%"
+        "URI: " (format nil "~A" uri) "~%"
         "SESSION: " (format nil "~A" (debug-session ht:*session*)) "~%"))))
 
 (defclass slash-redirect-acceptor (easy-routes:easy-routes-acceptor)
@@ -31,18 +32,14 @@
    same URL with a trailing slash, while supporting Easy-Routes."))
 
 (defmethod ht:acceptor-dispatch-request ((acceptor slash-redirect-acceptor) request)
-  (flet ((ends-with (string char)
-                    "Checks if STRING ends with CHAR."
-                    (and (> (length string) 0) (char= (char string (1- (length string))) char))))
-    (let* ((uri (ht:request-uri request))
-           (method (ht:request-method request)))
-      (debug-request request)
-      (if (and (not (equal "/" uri))
-               (not (ends-with uri #\/))
-               (eq :get method))
-          (ht:redirect (concatenate 'string uri "/") :code 301)
-          (call-next-method)))))
 
+  (let* ((uri (ht:request-uri request))
+         (modified-uri (web-lisp-misc:ensure-path-ends-with-slash uri)))
+    (debug-request request)
+
+    (if (string= uri modified-uri)
+        (call-next-method)
+        (ht:redirect modified-uri :code 301))))
 
 (defmethod session-created ((acceptor slash-redirect-acceptor) (session t))
   (ht:log-message* :INFO "Session created: ~A // ~A // ~Α"
