@@ -16,6 +16,7 @@
 
     messages))
 
+
 (defun nav ()
   (sp:with-html
     (:nav :class "navbar navbar-expand-md navbar-dark bg-dark mb-4"
@@ -32,13 +33,14 @@
                 (:div :class "navbar-collapse collapse" :id "navbarCollapse"
                       (:ul :class "navbar-nav me-auto mb-2 mb-md-0"
                            (:li :class "nav-item"
+                                (:a :class "nav-link" :href "#" "Link")))
+                      (:ul :class "navbar-nav  mb-2 mb-md-0"
+                           (:li :class "nav-item "
                                 (if (web-lisp-auth:logged-in)
                                     (:form :method "post" :action (easy-routes:genurl 'logout)
                                            (:button :class "nav-link" :type "submit"
                                                     (concatenate 'string (ht:session-value :username) "| Logout")))
-                                    (:a :class "nav-link" :aria-current "page" :href (easy-routes:genurl 'login) "Login")))
-                           (:li :class "nav-item"
-                                (:a :class "nav-link" :href "#" "Link"))))))))
+                                    (:a :class "nav-link" :aria-current "page" :href (easy-routes:genurl 'login) "Login")))))))))
 
 (defun show-messages ()
   (let ((messages (get-messages)))
@@ -76,6 +78,7 @@
                  :integrity "sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
                  :crossorigin "anonymous")))
 
+
 (defmacro with-page ((&key title) &body body)
   `(sp:with-html-string
      (:doctype)
@@ -89,60 +92,3 @@
              (:div :class "container-fluid"
                    ,@body)
              (footer)))))
-
-(defparameter *shopping-list*
-              '("Atmospheric pond1s"
-                "Electric gumption socks"
-                "Mrs. Leland's embyronic television combustion"
-                "Savage gymnatic aggressors"
-                "ασδα1"
-                "Intravenous retribution champions"))
-
-(defparameter *user-name* "John Q. Lisper")
-
-(defparameter *last-login* "12th 1")
-
-(easy-routes:defroute foo ("/foo/:x") (y &get z)
-  (format nil "x: ~a y: ~a z: ~a" x y z))
-
-(defun shopping-list ()
-  (with-page (:title "Home page")
-    (:header
-     (:h1 "Home page"))
-    (:section
-     ("~A, here is *your* shopping list: " *user-name*)
-     (:ol (dolist (item *shopping-list*)
-            (:li (1+ (random 110)) item))))))
-
-(easy-routes:defroute home ("/") ()
-  (shopping-list))
-
-
-(easy-routes:defroute login ("/login/" :method :get) ()
-  (with-page (:title "Σύνδεση")
-
-    (:form :style "max-width: 400px; margin: auto;" :method "post" :action ""
-           (:h1 :class "h3 mb-3 fw-normal" "Συνδεθείτε")
-
-           (:div :class "form-floating"
-                 (:input :value "root" :name "username" :type "text" :class "form-control" :id "floatingInput" :placeholder "Ον. χρήστη")
-                 (:label :for "floatingInput" "Ον. χρήστη"))
-
-           (:div :class "form-floating"
-                 (:input :value "123" :name "password" :type "password" :class "form-control" :id "floatingPassword" :placeholder "Κωδικός")
-                 (:label :for "floatingPassword" "Κωδικός"))
-
-           (:button :class "btn btn-primary w-100 py-2" :type "submit" "Σύνδεση"))))
-
-(easy-routes:defroute login-post ("/login/" :method :post) (&post username password)
-  (if (web-lisp-auth:authenticate username password)
-      (progn
-       (web-lisp-auth:do-login username)
-       (add-flash-message "Επιτυχής σύνδεση!" 'success)
-       (ht:redirect (easy-routes:genurl 'home)))
-      (ht:redirect (easy-routes:genurl 'login))))
-
-(easy-routes:defroute logout ("/logout/" :method :post) ()
-  (web-lisp-auth:do-logout)
-  (add-flash-message "Επιτυχής αποσύνδεση" 'success)
-  (ht:redirect (easy-routes:genurl 'home)))
