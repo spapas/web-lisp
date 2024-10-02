@@ -77,4 +77,4 @@
   (is (equal "/koko/?z=3" (web-lisp-misc:ensure-path-ends-with-slash "/koko?z=3"))))
 
 ;(fiveam:run! 'conf-tests)
-(fiveam:run! 'misc-tests)
+;(fiveam:run! 'misc-tests)

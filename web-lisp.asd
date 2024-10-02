@@ -37,14 +37,14 @@
 (defsystem #:web-lisp/tests
   :author "Serafeim"
   :description "tests web-lisp"
-  :depends-on (:web-lisp :fiveam)
+  :depends-on (:web-lisp :fiveam :uiop)
   :serial t
   :components ((:module "t"
                         :serial t
                         :components
                         ((:file "tests")
                          (:file "runner"))))
-  :perform (test-op (op c) (symbol-call
-                            :fiveam
-                            :run!
-                            :web-lisp-tests)))
+  :perform (test-op (op c) (uiop:symbol-call :fiveam :run!
+                             (uiop:find-symbol*
+                               '#:all-tests
+                               :web-lisp-tests))))
