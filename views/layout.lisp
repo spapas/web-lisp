@@ -7,12 +7,20 @@
 
 (in-package #:web-lisp-views)
 
+(defun add-flash-message (message &optional (type :info))
+  (push (list type message) (ht:session-value :flash-messages)))
+
+(defun get-messages ()
+  (let ((messages (copy-tree (ht:session-value :flash-messages))))
+    (setf (ht:session-value :flash-messages) nil)
+
+    messages))
 
 (defun nav ()
   (sp:with-html
     (:nav :class "navbar navbar-expand-md navbar-dark bg-dark mb-4"
           (:div :class "container-fluid"
-                (:a :class "navbar-brand" :href "#" "Top navbar")
+                (:a :class "navbar-brand" :href (easy-routes:genurl 'home) "Home")
                 (:button :class "navbar-toggler collapsed"
                          :type "button"
                          :data-bs-toggle "collapse"
@@ -26,10 +34,24 @@
                            (:li :class "nav-item"
                                 (if (web-lisp-auth:logged-in)
                                     (:form :method "post" :action (easy-routes:genurl 'logout)
-                                           (:button :class "nav-link" :type "submit" "Logout"))
+                                           (:button :class "nav-link" :type "submit"
+                                                    (concatenate 'string (ht:session-value :username) "| Logout")))
                                     (:a :class "nav-link" :aria-current "page" :href (easy-routes:genurl 'login) "Login")))
                            (:li :class "nav-item"
                                 (:a :class "nav-link" :href "#" "Link"))))))))
+
+(defun show-messages ()
+  (let ((messages (get-messages)))
+    (unless (null messages)
+      (sp:with-html
+        (:div :class "container-fluid"
+              (dolist (message messages)
+                (:div
+                 :class (concatenate 'string "alert alert-" (format nil "~(~a~)" (car message)) " alert-dismissible fade show")
+                 :role "alert"
+                 (:ul :style "margin-bottom: 0; margin-top: 0;"
+                      (:li (second message)))
+                 (:button :id "messages-alert" :type "button" :class "btn-close" :data-bs-dismiss "alert" :aria-label "Close"))))))))
 
 (defun footer ()
   (sp:with-html (:div :class "container-fluid"
@@ -63,6 +85,7 @@
        (styles)
        (js))
       (:body (nav)
+             (show-messages)
              (:div :class "container-fluid"
                    ,@body)
              (footer)))))
@@ -102,11 +125,11 @@
            (:h1 :class "h3 mb-3 fw-normal" "Συνδεθείτε")
 
            (:div :class "form-floating"
-                 (:input :name "username" :type "text" :class "form-control" :id "floatingInput" :placeholder "Ον. χρήστη")
+                 (:input :value "root" :name "username" :type "text" :class "form-control" :id "floatingInput" :placeholder "Ον. χρήστη")
                  (:label :for "floatingInput" "Ον. χρήστη"))
 
            (:div :class "form-floating"
-                 (:input :name "password" :type "password" :class "form-control" :id "floatingPassword" :placeholder "Κωδικός")
+                 (:input :value "123" :name "password" :type "password" :class "form-control" :id "floatingPassword" :placeholder "Κωδικός")
                  (:label :for "floatingPassword" "Κωδικός"))
 
            (:button :class "btn btn-primary w-100 py-2" :type "submit" "Σύνδεση"))))
@@ -115,9 +138,11 @@
   (if (web-lisp-auth:authenticate username password)
       (progn
        (web-lisp-auth:do-login username)
+       (add-flash-message "Επιτυχής σύνδεση!" 'success)
        (ht:redirect (easy-routes:genurl 'home)))
       (ht:redirect (easy-routes:genurl 'login))))
 
 (easy-routes:defroute logout ("/logout/" :method :post) ()
   (web-lisp-auth:do-logout)
+  (add-flash-message "Επιτυχής αποσύνδεση" 'success)
   (ht:redirect (easy-routes:genurl 'home)))

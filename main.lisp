@@ -23,7 +23,6 @@
       (concatenate 'string
         "REQUEST:~%Method: " (format nil "~A" method) "~%"
         "URI: " (format nil "~A" uri) "~%"
-        "URI: " (format nil "~A" uri) "~%"
         "SESSION: " (format nil "~A" (debug-session ht:*session*)) "~%"))))
 
 (defclass slash-redirect-acceptor (easy-routes:easy-routes-acceptor)
@@ -49,7 +48,6 @@
   (call-next-method))
 
 (defvar *base-acceptor* (make-instance
-                            ;'easy-routes:easy-routes-acceptor
                           'slash-redirect-acceptor
                           :port (get-conf :bind-port)
                           :address (get-conf :bind-address)))
@@ -59,16 +57,6 @@
         "/static/"
         #p"c:/progr/lisp/projects/web-lisp/static/")
       ht:*dispatch-table*)
-
-;; Define some test routes
-(ht:define-easy-handler
-  (login :uri "/login") ()
-  (setf (ht:content-type*) "text/html")
-  "κοκο")
-
-(ht:define-easy-handler (say-yo :uri "/yo") (name)
-  (setf (ht:content-type*) "text/plain")
-  (format nil "Hey~@[ ~A~]!" name))
 
 (defun start ()
   (ht:start *base-acceptor*))

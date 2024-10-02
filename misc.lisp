@@ -17,7 +17,7 @@
     (if (and path (not (string= path ""))
              (not (char= (char path (1- (length path))) #\/)))
         (format nil "~@[~A://~]~@[~A~]~A/~@[?~A~]~@[#~A~]"
-                scheme authority path query fragment)
+          scheme authority path query fragment)
         uri)))
 
 (defun split-uri (uri)
@@ -46,4 +46,3 @@
      (if fragment-start
          (subseq uri (1+ fragment-start))
          nil))))
-
