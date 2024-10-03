@@ -15,11 +15,12 @@
 
 
 (defun query (sql &rest params)
-  (let* ((query (dbi:prepare *conn*
-                             sql))
+  (let* ((query (dbi:prepare *conn* sql))
          (query (dbi:execute query params)))
     (dbi:fetch-all query)))
 
+(defun exec (sql &rest params)
+  (dbi:do-sql *conn* sql params))
 
 ; (let ((q (query "select id, created_on from apps_app")))
 ;   (dolist (r q) (format t "ID: ~A Created: ~A ~A ~%"
@@ -27,8 +28,7 @@
 ;                   (getf r :|created_on|)
 ;                       (type-of (getf r :|created_on|)))))
 
-; (defun exec (sql &rest params)
-;   params)
+; 
 
 ; (first (query "select id, created_on from apps_app"))
 
