@@ -18,5 +18,6 @@
 *.exe
 .vscode
 *.sqlite
+*.sqlite3
 conf/local.ini
 *.dll

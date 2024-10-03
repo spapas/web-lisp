@@ -15,12 +15,14 @@
   ; :pathname #P"c:/progr/lisp/common-projects/web-lisp/"
   :depends-on (:alexandria
                :cl-ini
+               :dbi
                :easy-routes
                :hunchentoot
                :spinneret)
   :serial t
   :components ((:file "conf")
                (:file "misc")
+               (:file "db")
                (:file "auth")
                (:file "main")
                (:module "views"
