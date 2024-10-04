@@ -21,7 +21,29 @@
   (shopping-list))
 
 
+(cl-forms:defform login-form (:action "/login/" :method :post)
+                  ((username :string :value "")
+                   (password :password :value "")
+                   (submit :submit :label "Σύνδεση")))
+
+(defvar *html*)
+
+(defun render-form (form)
+  (let ((form (cl-forms:get-form form)))
+    (with-output-to-string (*html*)
+      (spinneret:with-html
+        (let ((cl-forms.who:*html* *html*)
+              (spinneret:*html* *html*))
+          (:h1 "This is my form")
+          (cl-forms:with-form-theme 'cl-forms.who::bootstrap-form-theme
+            (cl-forms:with-form-renderer :who
+              (cl-forms:render-form form))))))))
+
 (easy-routes:defroute login ("/login/" :method :get) ()
+  (with-page (:title "Σύνδεση")
+    (:raw (render-form 'login-form))))
+
+(easy-routes:defroute login0 ("/login0/" :method :get) ()
   (with-page (:title "Σύνδεση")
 
     (:form :style "max-width: 400px; margin: auto;" :method "post" :action ""
@@ -43,7 +65,9 @@
        (web-lisp-auth:do-login username)
        (add-flash-message "Επιτυχής σύνδεση!" 'success)
        (ht:redirect (easy-routes:genurl 'home)))
-      (ht:redirect (easy-routes:genurl 'login))))
+      (progn
+       (add-flash-message "Σφάλμα σύνδεσης" 'danger)
+       (ht:redirect (easy-routes:genurl 'login)))))
 
 (easy-routes:defroute logout ("/logout/" :method :post) ()
   (web-lisp-auth:do-logout)
