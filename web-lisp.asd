@@ -14,9 +14,10 @@
   :entry-point "web-lisp:main"
   :depends-on (:alexandria
                :cl-ini
+               :cl-who
                :cl-forms
                :cl-forms.who
-               ;:cl-forms.who.bootstrap
+               :cl-forms.who.bootstrap
                :dbi
                :easy-routes
                :hunchentoot
