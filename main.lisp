@@ -20,10 +20,10 @@
   (let* ((uri (ht:request-uri request))
          (method (ht:request-method request)))
     (ht:log-message* :INFO
-                     (concatenate 'string
-                       "REQUEST:~%Method: " (format nil "~A" method) "~%"
-                       "URI: " (format nil "~A" uri) "~%"
-                       "SESSION: " (format nil "~A" (debug-session ht:*session*)) "~%"))))
+      (concatenate 'string
+        "REQUEST:~%Method: " (format nil "~A" method) "~%"
+        "URI: " (format nil "~A" uri) "~%"
+        "SESSION: " (format nil "~A" (debug-session ht:*session*)) "~%"))))
 
 (defclass slash-redirect-acceptor (easy-routes:easy-routes-acceptor)
     ()
@@ -42,9 +42,9 @@
 
 (defmethod session-created ((acceptor slash-redirect-acceptor) (session t))
   (ht:log-message* :INFO "Session created: ~A // ~A // ~Α"
-                   session
-                   session ht:*session*
-                   (ht:session-id session))
+    session
+    session ht:*session*
+    (ht:session-id session))
   (call-next-method))
 
 (defvar *base-acceptor* (make-instance
@@ -54,8 +54,8 @@
 
 ;; serve static files
 (push (ht:create-folder-dispatcher-and-handler
-       "/static/"
-       #p"c:/progr/lisp/projects/web-lisp/static/")
+        "/static/"
+        #p"c:/progr/lisp/projects/web-lisp/static/")
       ht:*dispatch-table*)
 
 (defun start ()
@@ -101,13 +101,13 @@
 
      ;; Join the listener thread in CCL
      (ccl:process-wait
-       "Waiting for listener"
-       (lambda ()
-         (find-if (lambda (proc)
-                    (alexandria:starts-with-subseq
-                      "hunchentoot-listener"
-                      (ccl:process-name proc)))
-             (ccl:all-processes)))))))
+      "Waiting for listener"
+      (lambda ()
+        (find-if (lambda (proc)
+                   (alexandria:starts-with-subseq
+                     "hunchentoot-listener"
+                     (ccl:process-name proc)))
+            (ccl:all-processes)))))))
 
 
 ;; Start at repl
@@ -115,3 +115,6 @@
 ;; (web-lisp:start)
 ;; Stop
 ;; (web-lisp:stop)
+
+
+
