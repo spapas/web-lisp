@@ -12,7 +12,6 @@
   :build-operation "program-op"
   :build-pathname "web-lisp"
   :entry-point "web-lisp:main"
-  ; :pathname #P"c:/progr/lisp/common-projects/web-lisp/"
   :depends-on (:alexandria
                :cl-ini
                :cl-forms

@@ -34,3 +34,8 @@
   "Check if the user is logged in"
   (if (null ht:*session*) nil
       (not (null (ht:session-value :username)))))
+
+
+(defun create-superuser ()
+  "Creates a superuser "
+  (format t "Creating superuser ~A" (uiop:command-line-arguments)))
