@@ -65,33 +65,33 @@
 
 (let ((form (cl-forms::find-form 'fields-form)))
   (forms:with-form-renderer :who
-    (forms:render-form form)))
+                            (forms:render-form form)))
 
-  (let ((form (forms:find-form 'fields-form)))
-        (forms:handle-request form)
-        (forms:with-form-field-values (name ready sex) form
-            (who:with-html-output (forms.who::*html*)
-               (:ul
-                 (:li (who:fmt "Name: ~A" name))
-                 (:li (who:fmt "Ready: ~A" ready))
-                 (:li (who:fmt "Sex: ~A" sex))))))
+(let ((form (forms:find-form 'fields-form)))
+  (forms:handle-request form)
+  (forms:with-form-field-values (name ready sex) form
+                                (who:with-html-output (forms.who::*html*)
+                                                      (:ul
+                                                       (:li (who:fmt "Name: ~A" name))
+                                                       (:li (who:fmt "Ready: ~A" ready))
+                                                       (:li (who:fmt "Sex: ~A" sex))))))
 
 (with-output-to-string (forms.who:*html*)
   (let ((form (forms:find-form 'fields-form)))
     (forms:with-form-renderer :who
-      (forms:render-form form))))
-(defvar *html* )
+                              (forms:render-form form))))
+(defvar *html*)
 (let ((form (forms:find-form 'fields-form)))
-	 (with-output-to-string (*html*) 
-	   (spinneret:with-html
-	     (let ((cl-forms.who:*html* *html*)
-		   (spinneret:*html* *html*))
-	       (:h1 "This is my form")
-	       (forms:with-form-renderer :who
-		 (forms:render-form form))
-	       (:ul
-		(loop for i from 1 to 10
-		      do (:li (princ-to-string i))))))))
+  (with-output-to-string (*html*)
+    (spinneret:with-html
+     (let ((cl-forms.who:*html* *html*)
+           (spinneret:*html* *html*))
+       (:h1 "This is my form")
+       (forms:with-form-renderer :who
+                                 (forms:render-form form))
+       (:ul
+        (loop for i from 1 to 10
+              do (:li (princ-to-string i))))))))
 
 (defvar *db* (clsql:connect '("db.sqlite3") :database-type :sqlite3))
 (defvar *query* "SELECT * FROM users WHERE age > ?")
@@ -101,3 +101,7 @@
 ;; Process and print the results
 (dolist (row *results*)
   (format t "User: ~A~%" row))
+
+(defun create-superuser ()
+  "Creates a superuser "
+  (format t "Creating superuser ~A" (uiop:command-line-arguments)))
