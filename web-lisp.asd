@@ -31,6 +31,7 @@
                (:module "views"
                         :components
                         ((:file "helpers")
+                         (:file "auth")
                          (:file "main"))))
   :in-order-to ((test-op (test-op :web-lisp/tests))))
 
