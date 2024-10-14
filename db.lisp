@@ -22,6 +22,8 @@
 (defun exec (sql &rest params)
   (dbi:do-sql *conn* sql params))
 
+;(first (query "select * from user"))
+
 ; (let ((q (query "select id, created_on from apps_app")))
 ;   (dolist (r q) (format t "ID: ~A Created: ~A ~A ~%"
 ;                   (getf r :|id|)

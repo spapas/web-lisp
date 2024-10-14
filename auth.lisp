@@ -3,18 +3,17 @@
 (defpackage #:web-lisp-auth
   (:use :cl)
   (:local-nicknames (#:ht #:hunchentoot))
-  (:export #:authenticate #:do-login #:do-logout #:logged-in))
+  (:export
+   #:authenticate
+   #:do-login
+   #:do-logout
+   #:do-register
+   #:logged-in))
 
 (in-package #:web-lisp-auth)
 
 (defparameter *iterations* 720000)
 
-(defun authenticate (username password)
-  "Authenticate a user"
-  (if (and (string= username "root")
-           (string= password "123"))
-      t
-      nil))
 
 (defun do-login (username)
   "Do the login by assigning the username to the session"
@@ -36,23 +35,6 @@
   "Check if the user is logged in"
   (if (null ht:*session*) nil
       (not (null (ht:session-value :username)))))
-
-
-; (ql:quickload 'ironclad)
-; 
-
-; (ironclad:pbkdf2-check-password "123" "pbkdf2_sha256$720000$NckZFbp7CMeQ90wUzCKs3y$AkiqY7S3ampxBekGD5TgOx0Uk6VdC7AE4/tvbTiod0Y=")
-
-; (ironclad:pbkdf2-hash-password (ironclad:ascii-string-to-byte-array "123"))
-
-; (with-output-to-string (out) 
-;   (s-base64:encode-base64-bytes (ironclad:pbkdf2-hash-password (ironclad:ascii-string-to-byte-array "123") 
-;                                  :salt (ironclad:ascii-string-to-byte-array "scRIdcYhttb09OmIodwIvW")
-;                                  :digest 'ironclad:sha256
-;                                  :iterations 720000) out ))
-
-;37|pbkdf2_sha256$720000$scRIdcYhttb09OmIodwIvW$Auj9fYAbjw9mqvsONL9+8VALmUb7ZQztYK3RyKbpA6c=
-
 
 (defun create-superuser ()
   "Creates a superuser "
@@ -98,6 +80,19 @@
     (equal encoded new-encoded)))
 
 
-(defun do-register (username password)
+(defun do-register (username password email first-name last-name)
   "Do the register by creating a new user with username and password to the session"
-  (ht:log-message* :INFO (format nil "Creating a new user with username ~a" username)))
+  (ht:log-message* :INFO (format nil "Creating a new user with username ~a" username))
+  (let ((serialized-password (serialize-password password)))
+    (web-lisp-db:exec "INSERT INTO user (username, password, is_superuser, is_active, email, first_name, last_name) 
+      VALUES ($1, $2, 0, 1, $3, $4, $5)"
+      username serialized-password email first-name last-name)
+    (do-login username)))
+
+
+(defun authenticate (username password)
+  "Authenticate a user"
+  (let ((serialized-hash (second (first (web-lisp-db:query "SELECT password FROM user WHERE username = $1" username)))))
+
+    (if (null serialized-hash) nil
+        (check-password password serialized-hash))))

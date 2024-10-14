@@ -49,6 +49,9 @@
                                                                   (clavier:not-blank)))
                    (password :password :value "")
                    (password-verify :password :value "")
+                   (email :email :value "")
+                   (first-name :password :value "")
+                   (last-name :password :value "")
                    (submit :submit :label "Εγγραφή")))
 
 (defun render-register-form (&optional form-instance)
@@ -65,14 +68,11 @@
 (defun register-form-errors (form)
   (if (forms::validate-form form)
       (forms::with-form-field-values (username password password-verify) form
-        (cond ((not (equal password password-verify)) (progn
-                                                       (forms:add-form-error 'password-verify "Οι κωδικοί δεν ταιριάζουν" form)
-                                                       form))
-              ((equal username "root") (progn
-                                        (forms:add-form-error 'username "Το όνομα χρήστη υπάρχει ήδη" form)
-                                        form))
+        (cond ((not (equal password password-verify))
+                (forms:add-form-error 'password-verify "Οι κωδικοί δεν ταιριάζουν" form))
+              ((equal username "root")
+                (forms:add-form-error 'username "Το όνομα χρήστη υπάρχει ήδη" form))
               (t nil)))
-
       form))
 
 (easy-routes:defroute register-post ("/register/" :method :post) ()
@@ -80,9 +80,9 @@
     (forms:handle-request form)
     (if (register-form-errors form)
         (render-register-form form)
-        (forms::with-form-field-values (username password) form
+        (forms::with-form-field-values (username password email first-name last-name) form
           (progn
-           (web-lisp-auth:do-register username password)
+           (web-lisp-auth:do-register username password email first-name last-name)
            (web-lisp-auth:do-login username)
            (add-flash-message "Επιτυχής εγγραφή" 'success)
            (ht:redirect (easy-routes:genurl 'home)))))))
