@@ -67,12 +67,14 @@
 
 (test auth-tests
   "Test the conf"
+  (web-lisp-auth:do-register "root" "123" "foo@bar.gr" "1" "2")
   (is (equal (web-lisp-auth:authenticate "root" "123") t))
   (is (equal (web-lisp-auth:authenticate "user" "user") nil)))
 
 (test misc-tests
   "Test the misc module"
-  (is (equal "http://localhost:8000/login/?foo=bar&baz=qux#ko" (web-lisp-misc:ensure-path-ends-with-slash "http://localhost:8000/login?foo=bar&baz=qux#ko")))
+  (is (equal "http://localhost:8000/login/?foo=bar&baz=qux#ko"
+             (web-lisp-misc:ensure-path-ends-with-slash "http://localhost:8000/login?foo=bar&baz=qux#ko")))
   (is (equal "/koko/?z=3" (web-lisp-misc:ensure-path-ends-with-slash "/koko/?z=3")))
   (is (equal "/koko/?z=3" (web-lisp-misc:ensure-path-ends-with-slash "/koko?z=3"))))
 

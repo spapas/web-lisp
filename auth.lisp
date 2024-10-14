@@ -82,7 +82,6 @@
 
 (defun do-register (username password email first-name last-name)
   "Do the register by creating a new user with username and password to the session"
-  (ht:log-message* :INFO (format nil "Creating a new user with username ~a" username))
   (let ((serialized-password (serialize-password password)))
     (web-lisp-db:exec "INSERT INTO user (username, password, is_superuser, is_active, email, first_name, last_name) 
       VALUES ($1, $2, 0, 1, $3, $4, $5)"

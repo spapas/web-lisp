@@ -82,6 +82,7 @@
         (render-register-form form)
         (forms::with-form-field-values (username password email first-name last-name) form
           (progn
+           (ht:log-message* :INFO (format nil "Creating a new user with username ~a" username))
            (web-lisp-auth:do-register username password email first-name last-name)
            (web-lisp-auth:do-login username)
            (add-flash-message "Επιτυχής εγγραφή" 'success)
