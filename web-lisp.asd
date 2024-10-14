@@ -13,6 +13,7 @@
   :build-pathname "web-lisp"
   :entry-point "web-lisp:main"
   :depends-on (:alexandria
+               :babel
                :cl-ini
                :cl-who
                :cl-forms
@@ -23,7 +24,8 @@
                :hunchentoot
                :ironclad
                :s-base64
-               :spinneret)
+               :spinneret
+               :split-sequence)
   :serial t
   :components ((:file "conf")
                (:file "misc")

@@ -7,6 +7,8 @@
 
 (in-package #:web-lisp-auth)
 
+(defparameter *iterations* 720000)
+
 (defun authenticate (username password)
   "Authenticate a user"
   (if (and (string= username "root")
@@ -37,7 +39,7 @@
 
 
 ; (ql:quickload 'ironclad)
-; (ql:quickload 's-base64)
+; 
 
 ; (ironclad:pbkdf2-check-password "123" "pbkdf2_sha256$720000$NckZFbp7CMeQ90wUzCKs3y$AkiqY7S3ampxBekGD5TgOx0Uk6VdC7AE4/tvbTiod0Y=")
 
@@ -59,19 +61,43 @@
 
 (defun create-random-string (&optional (n 10) (base 16))
   "Creates a random string using ironclad's strong-random function with base BASE and N digits"
-    (setf crypto:*prng* (crypto:make-prng :fortuna))
-    (subseq (with-output-to-string (s)
-       (loop for i to n do
-            (format s "~VR" base
-                    (ironclad:strong-random 100000000000))))
-            0 n))
+  (setf crypto:*prng* (crypto:make-prng :fortuna))
+  (subseq (with-output-to-string (s)
+            (loop for i to n do
+                    (format s "~VR" base
+                      (ironclad:strong-random 100000000000))))
+          0 n))
+
+(defun str-to-bytea (str)
+  "Converts a utf-8 str to a byte array"
+  (babel:string-to-octets str :encoding :utf-8))
+
+(defun hash-to-base64 (password salt iterations)
+  "Encodes a password with sha256 using salt and iterations and returns it to base64"
+  (with-output-to-string (out)
+    (s-base64:encode-base64-bytes
+      (ironclad:pbkdf2-hash-password (str-to-bytea password)
+                                     :salt (str-to-bytea salt)
+                                     :digest 'ironclad:sha256
+                                     :iterations iterations) out)))
+
+(defun serialize-password (password)
+  "Serializes a password for save to the database"
+  (let* ((salt (create-random-string 24))
+         (encoded (hash-to-base64 password salt *iterations*)))
+    (format nil "pbkdf2_sha256$~A$~A$~A" *iterations* salt encoded)))
 
 
+(defun check-password (password serialized-hash)
+  "Checks that the password received maches the hashed password from the db"
+  (let* ((parts (split-sequence:split-sequence #\$ serialized-hash))
+         (iterations (parse-integer (second parts)))
+         (salt (third parts))
+         (encoded (fourth parts))
+         (new-encoded (hash-to-base64 password salt iterations)))
+    (equal encoded new-encoded)))
 
 
 (defun do-register (username password)
   "Do the register by creating a new user with username and password to the session"
-  (ht:log-message* :INFO (format nil "Creating a new user with username ~a" username))
-  
-  )
-
+  (ht:log-message* :INFO (format nil "Creating a new user with username ~a" username)))
