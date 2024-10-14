@@ -45,26 +45,44 @@
 
 
 (cl-forms:defform register-form (:action "/register/" :method :post)
-                  ((username :string :value "")
+                  ((username :string :value "" :constraints (list (clavier:is-a-string)
+                                                                  (clavier:not-blank)))
                    (password :password :value "")
                    (password-verify :password :value "")
                    (submit :submit :label "Εγγραφή")))
 
-(easy-routes:defroute register ("/register/" :method :get) ()
+(defun render-register-form (&optional form-instance)
   (with-page (:title "Εγγραφή")
     (:div (:h2 "Εγγραφείτε")
-          (:raw (render-form 'register-form)))))
+          (:raw
+           (if form-instance
+               (render-form-instance form-instance)
+               (render-form 'register-form))))))
 
-(easy-routes:defroute register-post ("/register/" :method :post) (&post username password password-verify)
+(easy-routes:defroute register ("/register/" :method :get) ()
+  (render-register-form))
+
+(defun register-form-errors (form)
+  (if (forms::validate-form form)
+      (forms::with-form-field-values (username password password-verify) form
+        (cond ((not (equal password password-verify)) (progn
+                                                       (forms:add-form-error 'password-verify "Οι κωδικοί δεν ταιριάζουν" form)
+                                                       form))
+              ((equal username "root") (progn
+                                        (forms:add-form-error 'username "Το όνομα χρήστη υπάρχει ήδη" form)
+                                        form))
+              (t nil)))
+
+      form))
+
+(easy-routes:defroute register-post ("/register/" :method :post) ()
   (let ((form (forms:find-form 'register-form)))
     (forms:handle-request form)
-    (ht:log-message* :INFO "KOOKO")
-    (ht:log-message* :INFO (format nil "~A" (print-object form t)))
-    (if (equal password password-verify)
-        (progn
-         (web-lisp-auth:do-login username)
-         (add-flash-message "Επιτυχής εγγραφή" 'success)
-         (ht:redirect (easy-routes:genurl 'home)))
-        (progn
-         (add-flash-message "Οι κωδικοί δε συμφωνούν" 'danger)
-         (ht:redirect (easy-routes:genurl 'register))))))
+    (if (register-form-errors form)
+        (render-register-form form)
+        (forms::with-form-field-values (username password) form
+          (progn
+           (web-lisp-auth:do-register username password)
+           (web-lisp-auth:do-login username)
+           (add-flash-message "Επιτυχής εγγραφή" 'success)
+           (ht:redirect (easy-routes:genurl 'home)))))))

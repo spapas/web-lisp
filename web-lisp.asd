@@ -21,6 +21,8 @@
                :dbi
                :easy-routes
                :hunchentoot
+               :ironclad
+               :s-base64
                :spinneret)
   :serial t
   :components ((:file "conf")

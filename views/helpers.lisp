@@ -95,12 +95,16 @@
 
 (defvar *html*)
 
+
 (defun render-form (form)
-  (let ((form (cl-forms:get-form form)))
-    (with-output-to-string (*html*)
-      (spinneret:with-html
-        (let ((cl-forms.who:*html* *html*)
-              (spinneret:*html* *html*))
-          (cl-forms:with-form-theme 'cl-forms.who::bootstrap-form-theme
-            (cl-forms:with-form-renderer :who
-              (cl-forms:render-form form))))))))
+  (render-form-instance (cl-forms:get-form form)))
+
+
+(defun render-form-instance (form)
+  (with-output-to-string (*html*)
+    (spinneret:with-html
+      (let ((cl-forms.who:*html* *html*)
+            (spinneret:*html* *html*))
+        (cl-forms:with-form-theme 'cl-forms.who::bootstrap-form-theme
+          (cl-forms:with-form-renderer :who
+            (cl-forms:render-form form)))))))

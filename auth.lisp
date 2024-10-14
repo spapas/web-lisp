@@ -52,9 +52,26 @@
 ;37|pbkdf2_sha256$720000$scRIdcYhttb09OmIodwIvW$Auj9fYAbjw9mqvsONL9+8VALmUb7ZQztYK3RyKbpA6c=
 
 
-
-
-
 (defun create-superuser ()
   "Creates a superuser "
   (format t "Creating superuser ~A" (uiop:command-line-arguments)))
+
+
+(defun create-random-string (&optional (n 10) (base 16))
+  "Creates a random string using ironclad's strong-random function with base BASE and N digits"
+    (setf crypto:*prng* (crypto:make-prng :fortuna))
+    (subseq (with-output-to-string (s)
+       (loop for i to n do
+            (format s "~VR" base
+                    (ironclad:strong-random 100000000000))))
+            0 n))
+
+
+
+
+(defun do-register (username password)
+  "Do the register by creating a new user with username and password to the session"
+  (ht:log-message* :INFO (format nil "Creating a new user with username ~a" username))
+  
+  )
+
