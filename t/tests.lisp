@@ -66,7 +66,7 @@
     (is (= (web-lisp-conf:get-conf :bind-port :global merged-conf) 8001))))
 
 (test auth-tests
-  "Test the conf"
+  "Test the auth module"
   (web-lisp-auth:do-register "root" "123" "foo@bar.gr" "1" "2")
   (is (equal (web-lisp-auth:authenticate "root" "123") t))
   (is (equal (web-lisp-auth:authenticate "user" "user") nil)))

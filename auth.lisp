@@ -58,10 +58,10 @@
   "Encodes a password with sha256 using salt and iterations and returns it to base64"
   (with-output-to-string (out)
     (s-base64:encode-base64-bytes
-      (ironclad:pbkdf2-hash-password (str-to-bytea password)
-                                     :salt (str-to-bytea salt)
-                                     :digest 'ironclad:sha256
-                                     :iterations iterations) out)))
+     (ironclad:pbkdf2-hash-password (str-to-bytea password)
+                                    :salt (str-to-bytea salt)
+                                    :digest 'ironclad:sha256
+                                    :iterations iterations) out)))
 
 (defun serialize-password (password)
   "Serializes a password for save to the database"
@@ -81,17 +81,17 @@
 
 
 (defun do-register (username password email first-name last-name)
-  "Do the register by creating a new user with username and password to the session"
+  "Do the registration by creating a new user with username and password to the session"
   (let ((serialized-password (serialize-password password)))
-    (web-lisp-db:exec "INSERT INTO user (username, password, is_superuser, is_active, email, first_name, last_name) 
+    (web-lisp-db:exec "INSERT INTO user 
+     (username, password, is_superuser, is_active, email, first_name, last_name) 
       VALUES ($1, $2, 0, 1, $3, $4, $5)"
-      username serialized-password email first-name last-name)
+                      username serialized-password email first-name last-name)
     (do-login username)))
 
 
 (defun authenticate (username password)
   "Authenticate a user"
   (let ((serialized-hash (second (first (web-lisp-db:query "SELECT password FROM user WHERE username = $1" username)))))
-
     (if (null serialized-hash) nil
         (check-password password serialized-hash))))
