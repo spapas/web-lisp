@@ -6,17 +6,19 @@
 
 (in-package #:web-lisp-conf)
 
+(defvar *conf-dir* "conf/")
+
 ;;; The base configuration is kept in a base.ini file inside /conf. The settings
 ;;; there can be overriden by adding a local.ini file in the same directory.
 ;;; The local.ini shouldn't be added to the VCS.
 
-(defun read-conf (&optional (conf-dir "conf/"))
+(defun read-conf (&optional (conf-dir *conf-dir*))
   "Read the base configuration"
   (let* ((base-conf-name (concatenate 'string conf-dir "base.ini"))
          (base-conf (merge-pathnames base-conf-name (UIOP/OS:GETCWD))))
     (cl-ini:parse-ini base-conf)))
 
-(defun read-local-conf (&optional (conf-dir "conf/"))
+(defun read-local-conf (&optional (conf-dir *conf-dir*))
   "Read the extra configuration"
   (let* ((local-conf-name (concatenate 'string conf-dir "local.ini"))
          (local-conf (merge-pathnames local-conf-name (UIOP/OS:GETCWD))))

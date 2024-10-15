@@ -6,12 +6,11 @@
 
 (in-package #:web-lisp-db)
 
-
-(defvar *conn*
-        (dbi:connect :sqlite3
-          :database-name (merge-pathnames
+(defparameter *db-name* (merge-pathnames
                            (web-lisp-conf:get-conf :filename :database)
-                           (UIOP/OS:GETCWD))))
+                           (UIOP/OS:GETCWD)))
+(defvar *conn*
+        (dbi:connect :sqlite3 :database-name *db-name*))
 
 
 (defun query (sql &rest params)

@@ -15,10 +15,13 @@
   :depends-on (:alexandria
                :babel
                :cl-ini
-               :cl-who
                :cl-forms
                :cl-forms.who
                :cl-forms.who.bootstrap
+               :cl-migratum
+               :cl-migratum.provider.local-path
+               :cl-migratum.driver.dbi
+               :cl-who
                :dbi
                :easy-routes
                :hunchentoot
@@ -29,7 +32,10 @@
   :serial t
   :components ((:file "conf")
                (:file "misc")
-               (:file "db")
+               (:module "db"
+                        :components
+                        ((:file "base")
+                         (:file "migrate")))
                (:file "auth")
                (:file "main")
                (:module "views"
