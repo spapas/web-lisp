@@ -2,7 +2,7 @@
 
 (defpackage #:web-lisp-db
   (:use :cl)
-  (:export #:query #:exec #:connect #:run-migrate))
+  (:export #:query #:exec #:connect #:run-migrate #:a>))
 
 (in-package #:web-lisp-db)
 

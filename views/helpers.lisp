@@ -2,6 +2,7 @@
 
 (defpackage #:web-lisp-views
   (:use :cl)
+  (:import-from :web-lisp-db #:a>)
   (:local-nicknames (#:sp #:spinneret)
                     (#:ht #:hunchentoot)))
 

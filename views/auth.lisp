@@ -91,6 +91,11 @@
 (easy-routes:defroute users ("/users/" :method :get) ()
   (with-page (:title "Χρήστες")
     (:h2 "Χρήστες")
-    (:ul (loop for user in (web-lisp-auth::get-users)
-               collect
-                 (:li (format nil "~a" user))))))
+    (:table :class "table" (loop for user in (web-lisp-db::get-users)
+                                 collect
+                                   (:tr (:td (a> user 'id))
+                                        (:td (a> user 'username))
+                                        (:td (a> user 'last-name))
+                                        (:td (a> user 'first-name))
+                                        (:td (a> user 'email))
+                                        (:td (format nil "~a" user)))))))
