@@ -7,6 +7,7 @@
 (in-package #:web-lisp-conf)
 
 (defvar *conf-dir* "conf/")
+(defvar *conf* nil "The global configuration")
 
 ;;; The base configuration is kept in a base.ini file inside /conf. The settings
 ;;; there can be overriden by adding a local.ini file in the same directory.
@@ -45,9 +46,14 @@
           (push (assoc key li2) li1)))
     li1))
 
-(defparameter *conf* (merge-config-lists (read-conf) (read-local-conf)))
+;(defparameter *conf* (merge-config-lists (read-conf) (read-local-conf)))
+
+(defun reread-conf ()
+  "Reread the configuration"
+  (setf *conf* (merge-config-lists (read-conf) (read-local-conf))))
 
 (defun get-conf (key &optional (section :global) (conf-holder *conf*))
   "The base API of conf; get a value"
+  (when (null conf-holder)
+        (setf *conf* (merge-config-lists (read-conf) (read-local-conf))))
   (cl-ini:ini-value conf-holder key :section section))
-

@@ -59,6 +59,7 @@
       ht:*dispatch-table*)
 
 (defun start ()
+  (web-lisp-db:connect )
   (ht:start *base-acceptor*))
 
 (defun stop ()

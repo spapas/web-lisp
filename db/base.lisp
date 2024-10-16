@@ -2,16 +2,20 @@
 
 (defpackage #:web-lisp-db
   (:use :cl)
-  (:export #:query #:exec))
+  (:export #:query #:exec #:connect #:run-migrate))
 
 (in-package #:web-lisp-db)
 
-(defparameter *db-name* (merge-pathnames
-                           (web-lisp-conf:get-conf :filename :database)
-                           (UIOP/OS:GETCWD)))
-(defvar *conn*
-        (dbi:connect :sqlite3 :database-name *db-name*))
 
+(defvar *conn* nil "The global database connection")
+
+(defun connect ()
+  (let ((db-name (merge-pathnames
+                   (web-lisp-conf:get-conf :filename :database)
+                   (UIOP/OS:GETCWD))))
+    (format t "*** Connecting to ~A~%" db-name)
+    (setf *conn* (dbi:connect :sqlite3 :database-name db-name))
+    (format t "*** *conn* is ~A~%" *conn*)))
 
 (defun query (sql &rest params)
   (let* ((query (dbi:prepare *conn* sql))
@@ -32,7 +36,6 @@
 ; 
 
 ; (first (query "select id, created_on from apps_app"))
-
 
 ;(ql:quickload 'sqlite)
 ;(defvar *db* (sqlite:connect "db.sqlite3"))
