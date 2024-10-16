@@ -88,14 +88,27 @@
            (add-flash-message "Επιτυχής εγγραφή" 'success)
            (ht:redirect (easy-routes:genurl 'home)))))))
 
+
+(defun render-boolean (value)
+  (if value "Ναι" "Όχι"))
+
 (easy-routes:defroute users ("/users/" :method :get) ()
   (with-page (:title "Χρήστες")
     (:h2 "Χρήστες")
-    (:table :class "table" (loop for user in (web-lisp-db::get-users)
-                                 collect
-                                   (:tr (:td (a> user 'id))
-                                        (:td (a> user 'username))
-                                        (:td (a> user 'last-name))
-                                        (:td (a> user 'first-name))
-                                        (:td (a> user 'email))
-                                        (:td (format nil "~a" user)))))))
+    (:table :class "table"
+            (:tr (:th "ID")
+                 (:th "Όνομα χρήστη")
+                 (:th "Επώνυμο")
+                 (:th "Όνομα")
+                 (:th "Email")
+                 (:th "Ενεργός")
+                 (:th "Διαχειριστής"))
+            (loop for user in (web-lisp-db::get-users)
+                  collect
+                    (:tr (:td (a> user 'id))
+                         (:td (a> user 'username))
+                         (:td (a> user 'last-name))
+                         (:td (a> user 'first-name))
+                         (:td (a> user 'email))
+                         (:td (render-boolean (a> user 'is-active)))
+                         (:td (render-boolean (a> user 'is-superuser))))))))

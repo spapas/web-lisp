@@ -30,6 +30,8 @@
 
 (defmacro a> (obj key)
     "Get a key from a DAO struct"
-    `(slot-value ,obj (intern (string ,key) (symbol-package 'user))))
+    `(slot-value ,obj (find-symbol (string ,key) :web-lisp-db)))
+
+
 
 
