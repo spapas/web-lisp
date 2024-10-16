@@ -87,3 +87,10 @@
            (web-lisp-auth:do-login username)
            (add-flash-message "Επιτυχής εγγραφή" 'success)
            (ht:redirect (easy-routes:genurl 'home)))))))
+
+(easy-routes:defroute users ("/users/" :method :get) ()
+  (with-page (:title "Χρήστες")
+    (:h2 "Χρήστες")
+    (:ul (loop for user in (web-lisp-auth::get-users)
+               collect
+                 (:li (format nil "~a" user))))))

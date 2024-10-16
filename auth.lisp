@@ -98,3 +98,7 @@
   (let ((serialized-hash (second (first (web-lisp-db:query "SELECT password FROM user WHERE username = $1" username)))))
     (if (null serialized-hash) nil
         (check-password password serialized-hash))))
+
+(defun get-users() 
+  "Get all users"
+  (web-lisp-db:query "SELECT * FROM user"))
