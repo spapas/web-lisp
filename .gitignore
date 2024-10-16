@@ -21,3 +21,4 @@
 *.sqlite3
 conf/local.ini
 *.dll
+*.log
