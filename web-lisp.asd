@@ -34,7 +34,8 @@
                (:file "misc")
                (:module "db"
                         :components
-                        ((:file "dao")
+                        ((:file "package")
+                         (:file "dao")
                          (:file "base")
                          (:file "migrate")))
                (:file "auth")

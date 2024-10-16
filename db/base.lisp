@@ -1,11 +1,4 @@
-(in-package :cl-user)
-
-(defpackage #:web-lisp-db
-  (:use :cl)
-  (:export #:query #:exec #:connect #:run-migrate #:a>))
-
 (in-package #:web-lisp-db)
-
 
 (defvar *conn* nil "The global database connection")
 
