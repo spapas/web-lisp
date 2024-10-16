@@ -1,7 +1,7 @@
 (in-package :cl-user)
 
 (defpackage #:web-lisp-misc
-  (:use :cl :web-lisp-conf)
+  (:use #:cl #:web-lisp-conf)
   (:local-nicknames (#:ht #:hunchentoot))
   (:export ensure-path-ends-with-slash))
 

@@ -1,7 +1,7 @@
 (in-package :cl-user)
 
 (defpackage #:web-lisp
-  (:use :cl :web-lisp-conf)
+  (:use #:cl #:web-lisp-conf)
   (:local-nicknames (#:ht #:hunchentoot))
   (:export #:main #:start #:stop))
 

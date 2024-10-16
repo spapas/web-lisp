@@ -1,5 +1,5 @@
 (in-package :cl-user)
 
 (defpackage #:web-lisp-db
-  (:use :cl)
+  (:use #:cl)
   (:export #:query #:exec #:connect #:run-migrate #:a>))

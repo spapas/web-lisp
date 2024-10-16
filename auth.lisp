@@ -1,7 +1,7 @@
 (in-package :cl-user)
 
 (defpackage #:web-lisp-auth
-  (:use :cl)
+  (:use #:cl)
   (:local-nicknames (#:ht #:hunchentoot))
   (:export
    #:authenticate

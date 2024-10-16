@@ -1,7 +1,7 @@
 (in-package :cl-user)
 
 (defpackage #:web-lisp-conf
-  (:use :cl)
+  (:use #:cl)
   (:export #:get-conf))
 
 (in-package #:web-lisp-conf)

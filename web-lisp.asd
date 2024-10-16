@@ -1,7 +1,7 @@
 (in-package :cl-user)
-(defpackage web-lisp-asd
-  (:use :cl :asdf))
-(in-package :web-lisp-asd)
+(defpackage #:web-lisp-asd
+  (:use #:cl #:asdf))
+(in-package #:web-lisp-asd)
 
 (defsystem #:web-lisp
   :name "web-lisp"
