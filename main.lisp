@@ -59,7 +59,8 @@
       ht:*dispatch-table*)
 
 (defun start ()
-  (web-lisp-db:connect )
+  (web-lisp-db:connect)
+  (web-lisp-db:run-migrate)
   (ht:start *base-acceptor*))
 
 (defun stop ()
@@ -116,6 +117,3 @@
 ;; (web-lisp:start)
 ;; Stop
 ;; (web-lisp:stop)
-
-
-
