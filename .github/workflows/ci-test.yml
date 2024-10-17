@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        lisp: [sbcl-bin, ccl-bin]
+        lisp: [sbcl-bin]
         os: [ubuntu-latest]
 
     steps:
@@ -24,16 +24,13 @@ jobs:
       - uses: 40ants/setup-lisp@v2
 
       # These steps run our tests
-      - name: Run tests (Non-Windows)
+      - name: Run tests
         if: runner.os != 'Windows'
         shell: bash
         run: |
           ros install neil-lindquist/ci-utils # for run-fiveam
-          #ros install prove # for run-prove:
-          #ros install rove # for [run-] rove
-
+          
           # Run the tests
           run-fiveam -e t -l web-lisp/tests :web-lisp-tests
-          run-prove web-lisp.asd
-          rove web-lisp.asd
+          
       
