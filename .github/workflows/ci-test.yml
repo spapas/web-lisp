@@ -17,15 +17,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      # setup-lisp requires an env variable to be set, not matrix.lisp
       - name: Set LISP env var
         run: echo "LISP=${{ matrix.lisp }}" >> $GITHUB_ENV
-      # This action installs roswell and a few other utilities such as qlot
       - uses: 40ants/setup-lisp@v2
 
       # These steps run our tests
       - name: Run tests
-        if: runner.os != 'Windows'
         shell: bash
         run: |
           # ros install neil-lindquist/ci-utils # for run-fiveam
@@ -35,6 +32,3 @@ jobs:
             --eval "(setf *compile-verbose* nil)" \
             --eval "(with-open-file (*error-output* \"warnings.log\" :direction :output :if-exists :supersede) (asdf:load-system :web-lisp/tests))" \
             --eval "(web-lisp-tests:run-tests)" 
-
-          
-      
