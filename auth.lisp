@@ -2,12 +2,14 @@
 
 (defpackage #:web-lisp-auth
   (:use #:cl)
+  (:import-from :web-lisp-db #:a>)
   (:local-nicknames (#:ht #:hunchentoot))
   (:export
    #:authenticate
    #:do-login
    #:do-logout
    #:do-register
+   #:superuserp
    #:logged-in))
 
 (in-package #:web-lisp-auth)
@@ -89,7 +91,7 @@
 (defun do-register (username password email first-name last-name)
   "Do the registration by creating a new user with username and password to the session"
   (create-user
-   username password email first-name last-name)
+    username password email first-name last-name)
   (do-login username))
 
 
@@ -99,6 +101,10 @@
     (if (null serialized-hash) nil
         (check-password password serialized-hash))))
 
-(defun get-users() 
-  "Get all users"
-  (web-lisp-db:query "SELECT * FROM user"))
+
+(defun superuserp ()
+  "Check if the user is a superuser"
+  (if (not (logged-in)) nil
+      (let ((user (web-lisp-db::get-user-by-username (ht:session-value :username))))
+        (if (null user) nil
+            (a> user 'is-superuser)))))

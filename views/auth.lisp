@@ -92,7 +92,20 @@
 (defun render-boolean (value)
   (if value "Ναι" "Όχι"))
 
-(easy-routes:defroute users ("/users/" :method :get) ()
+
+(defun forbidden (&optional (message "Forbidden"))
+  (setf (ht:return-code*) ht:+http-forbidden+)
+  message)
+
+(defun @superuserp (next)
+  (if (web-lisp-auth:superuserp)
+      (funcall next)
+      (forbidden)))
+
+(easy-routes:defroute
+    users ("/users/"
+           :method :get
+           :decorators (@superuserp)) ()
   (with-page (:title "Χρήστες")
     (:h2 "Χρήστες")
     (:table :class "table"

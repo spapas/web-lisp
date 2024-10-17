@@ -27,6 +27,10 @@
   (mapcar #'row-to-user
       (query "SELECT * FROM user")))
 
+(defun get-user-by-username (username)
+  "Get the user"
+  (row-to-user (first  (query "SELECT * FROM user WHERE username = $1" username))))
+
 
 (defmacro a> (obj key)
     "Get a key from a DAO struct"
