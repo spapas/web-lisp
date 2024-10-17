@@ -1,38 +1,39 @@
-name: 'CI'
-
+name: CI
 on:
   push:
     branches:
       - 'master'
   pull_request:
 
+
 jobs:
-  tests:
-    runs-on: ubuntu-latest
-    
+  test:
+    name: ${{ matrix.lisp }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        lisp:
-          - sbcl-bin
-          - ccl-bin
-          
-    env:
-      LISP: ${{ matrix.lisp }}
+        lisp: [sbcl-bin, ccl-bin]
+        os: [ubuntu-latest]
 
     steps:
-      - uses: actions/checkout@v1
-      - uses: 40ants/setup-lisp@v4
-        with:
-          asdf-system: web-lisp
-      - uses: 40ants/run-tests@v2
-        with:
-          asdf-system: web-lisp
-          run-tests: |
-            ;(push #p"/home/runner/work/web-lisp/" ql:*local-project-directories*)
-            ;(push #p"/home/runner/work/" ql:*local-project-directories*)
-            ;(ql-dist:install-dist "http://dist.ultralisp.org/" :prompt nil)
-            (ql:quickload :web-lisp)
-            (ql:quickload :web-lisp/tests)
-            ;(setf *compile-verbose* nil)
-            ;(with-open-file (*error-output* "warnings.log" :direction :output :if-exists :supersede) (asdf:load-system :web-lisp/tests))
-            (web-lisp-tests:run-tests)
+      - uses: actions/checkout@v2
+      # setup-lisp requires an env variable to be set, not matrix.lisp
+      - name: Set LISP env var
+        run: echo "LISP=${{ matrix.lisp }}" >> $GITHUB_ENV
+      # This action installs roswell and a few other utilities such as qlot
+      - uses: 40ants/setup-lisp@v2
+
+      # These steps run our tests
+      - name: Run tests (Non-Windows)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          ros install neil-lindquist/ci-utils # for run-fiveam
+          #ros install prove # for run-prove:
+          #ros install rove # for [run-] rove
+
+          # Run the tests
+          run-fiveam -e t -l web-lisp/tests :web-lisp-tests
+          run-prove web-lisp.asd
+          rove web-lisp.asd
+      
