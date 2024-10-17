@@ -37,6 +37,7 @@
                         ((:file "package")
                          (:file "dao")
                          (:file "base")
+                         (:file "dbq")
                          (:file "migrate")))
                (:file "auth")
                (:file "main")

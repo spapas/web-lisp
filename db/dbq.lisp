@@ -1,6 +1,6 @@
 (in-package #:web-lisp-db)
 
-(defmacro dynamic_query (&key fields tables join where order limit)
+(defmacro dynamic-query (&key fields tables join where order limit)
   (let ((query (gensym "query")))
     `(let ((,query "SELECT "))
        (setf ,query (concatenate 'string ,query
@@ -110,21 +110,22 @@
             when pos do (write-string replacement out)
           while pos)))
 
-(web-lisp-db:query "select file from pragma_database_list where name='main';")
 
-(web-lisp-db:query
-  (dynamic_query :fields (u.id u.username u.email)
-                 :tables ((user u))
-                 ;:join (departments d (u.department_id = d.id))
-                 :where (:and (u.is_active = 1)
-                              (:or (u.username = "foo") (u.username = "root")))
-                 :order ((u.last_name :asc))
-                 :limit 100))
+; (web-lisp-db:query "select file from pragma_database_list where name='main';")
 
-(dynamic_query :fields (u.id u.username u.email)
-               :tables ((user u))
-               ;:join (departments d (u.department_id = d.id))
-               :where (:and (u.is_active = 1)
-                            (:or (u.username = "foo") (u.username = "root")))
-               :order ((u.last_name :asc))
-               :limit 100)
+; (web-lisp-db:query
+;   (dynamic_query :fields (u.id u.username u.email)
+;                  :tables ((user u))
+;                  ;:join (departments d (u.department_id = d.id))
+;                  :where (:and (u.is_active = 1)
+;                               (:or (u.username = "foo") (u.username = "root")))
+;                  :order ((u.last_name :asc))
+;                  :limit 100))
+
+; (dynamic_query :fields (u.id u.username u.email)
+;                :tables ((user u))
+;                ;:join (departments d (u.department_id = d.id))
+;                :where (:and (u.is_active = 1)
+;                             (:or (u.username = "foo") (u.username = "root")))
+;                :order ((u.last_name :asc))
+;                :limit 100)
