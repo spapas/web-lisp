@@ -31,6 +31,10 @@ jobs:
           ros install neil-lindquist/ci-utils # for run-fiveam
           
           # Run the tests
-          run-fiveam -l web-lisp/tests :web-lisp-tests
+          sbcl --noinform --non-interactive  --load web-lisp.asd \
+            --eval "(setf *compile-verbose* nil)" \
+            --eval "(with-open-file (*error-output* \"warnings.log\" :direction :output :if-exists :supersede) (asdf:load-system :web-lisp/tests))" \
+            --eval "(web-lisp-tests:run-tests)" 
+
           
       
