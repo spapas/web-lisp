@@ -31,6 +31,6 @@ jobs:
           ros install neil-lindquist/ci-utils # for run-fiveam
           
           # Run the tests
-          run-fiveam -e t -l web-lisp/tests :web-lisp-tests
+          run-fiveam -l web-lisp/tests :web-lisp-tests
           
       
