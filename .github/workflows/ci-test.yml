@@ -29,9 +29,9 @@ jobs:
         shell: bash
         run: |
           # ros install neil-lindquist/ci-utils # for run-fiveam
-          
+          ros install sbcl-bin
           # Run the tests
-          sbcl --noinform --non-interactive  --load web-lisp.asd \
+          ros run --noinform --non-interactive  --load web-lisp.asd \
             --eval "(setf *compile-verbose* nil)" \
             --eval "(with-open-file (*error-output* \"warnings.log\" :direction :output :if-exists :supersede) (asdf:load-system :web-lisp/tests))" \
             --eval "(web-lisp-tests:run-tests)" 
