@@ -28,7 +28,7 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          ros install neil-lindquist/ci-utils # for run-fiveam
+          # ros install neil-lindquist/ci-utils # for run-fiveam
           
           # Run the tests
           sbcl --noinform --non-interactive  --load web-lisp.asd \
