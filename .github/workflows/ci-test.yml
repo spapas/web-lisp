@@ -31,6 +31,7 @@ jobs:
             ;(push #p"/home/runner/work/web-lisp/" ql:*local-project-directories*)
             ;(push #p"/home/runner/work/" ql:*local-project-directories*)
             ;(ql-dist:install-dist "http://dist.ultralisp.org/" :prompt nil)
+            (ql:quickload :web-lisp)
             (ql:quickload :web-lisp/tests)
             ;(setf *compile-verbose* nil)
             ;(with-open-file (*error-output* "warnings.log" :direction :output :if-exists :supersede) (asdf:load-system :web-lisp/tests))
