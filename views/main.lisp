@@ -1,14 +1,13 @@
 (in-package #:web-lisp-views)
 
 
-(defun shopping-list ()
+(easy-routes:defroute home ("/") ()
   (with-page (:title "Home page")
     (:header
      (:h1 "Home page"))
     (:section
      (if (web-lisp-auth:logged-in)
-         (:p (format nil "You are logged in as ~A." (ht:session-value :username)))
+         
+         ;(:span "You are logged in as " (:b (ht:session-value :username)) ".")
+         (:raw (format nil "You are logged in as <b>~A</b>." (ht:session-value :username)))
          (:p "You are not logged in.")))))
-
-(easy-routes:defroute home ("/") ()
-  (shopping-list))

@@ -12,22 +12,6 @@
           (:raw (render-form 'login-form))
           (:a :class "btn btn-secondary" :href (easy-routes:genurl 'register) "Εγγραφή"))))
 
-(easy-routes:defroute login0 ("/login0/" :method :get) ()
-  (with-page (:title "Σύνδεση")
-
-    (:form :style "max-width: 400px; margin: auto;" :method "post" :action ""
-           (:h1 :class "h3 mb-3 fw-normal" "Συνδεθείτε")
-
-           (:div :class "form-floating"
-                 (:input :value "root" :name "username" :type "text" :class "form-control" :id "floatingInput" :placeholder "Ον. χρήστη")
-                 (:label :for "floatingInput" "Ον. χρήστη"))
-
-           (:div :class "form-floating"
-                 (:input :value "123" :name "password" :type "password" :class "form-control" :id "floatingPassword" :placeholder "Κωδικός")
-                 (:label :for "floatingPassword" "Κωδικός"))
-
-           (:button :class "btn btn-primary w-100 py-2" :type "submit" "Σύνδεση"))))
-
 (easy-routes:defroute login-post ("/login/" :method :post) (&post username password)
   (if (web-lisp-auth:authenticate username password)
       (progn
@@ -92,10 +76,6 @@
 (defun render-boolean (value)
   (if value "Ναι" "Όχι"))
 
-
-(defun forbidden (&optional (message "Forbidden"))
-  (setf (ht:return-code*) ht:+http-forbidden+)
-  message)
 
 (defun @superuserp (next)
   (if (web-lisp-auth:superuserp)
